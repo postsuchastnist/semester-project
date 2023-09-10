@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using static System.Console;
 using System.Collections.Generic;
 using System.Collections;
@@ -18,28 +18,20 @@ class Matrix //creating a class Matrix which creates a matrix and does operation
         a = new double[rows, cols];
     }
 
-    //readMatrix() just reads the input matrix in the natural way
-
-    public void readMatrix()
+    public void Matrixread(double[,] s)
     {
         for(int i = 0; i < rows; i ++)
         {
-            string[] s = ReadLine().Split();
             for(int j = 0; j < cols; j ++)
             {
-                a[i, j] = float.Parse(s[j]);
-            } 
+                a[i, j] = s[i, j];
+            }
         }
     }
-
     // this function adds two different matrices. It will throw an error if matrices' dimensions are not equal. o/w it produces 
     // a simple algorithm for adding two matrices
     public static Matrix operator + (Matrix a, Matrix b)
     {
-        if(a.rows != b.rows || a.cols != b.cols)
-        {
-            throw new Exception("Invalid data, try again");
-        }
         Matrix res = new Matrix(a.rows, a.cols);
         for(int i = 0; i < a.rows; i ++)
         {
@@ -58,10 +50,6 @@ class Matrix //creating a class Matrix which creates a matrix and does operation
 
     public static Matrix operator * (Matrix a, Matrix b)
     {
-        if(a.cols != b.rows)
-        {
-            throw new Exception("Invalid data, try again");
-        }
         Matrix res = new Matrix(a.rows, b.cols);
         for(int i = 0; i < a.rows; i ++)
         {
@@ -82,21 +70,45 @@ class Matrix //creating a class Matrix which creates a matrix and does operation
     //using Laplace expansion
     public double det()
     {
-        if(rows != cols)
-        {
-            throw new Exception("Invalid data, Matrix should be squared");
-        }
         int n = rows;
-        if(n == 1)
-        {
-            return a[0, 0];
-        }
-        double det = 0;
+        double det = 1;
         for(int col = 0; col < n; col ++)
         {
-            Matrix submatrix = this.temp(0, col);
-            double cofactor = a[0, col] * Math.Pow(-1, col) * submatrix.det();
-            det += cofactor;
+            int swapRow = col;
+            for(int row = col + 1; row < n; row ++)
+            {
+                if(Math.Abs(a[row, col]) > Math.Abs(a[swapRow, col]))
+                {
+                    swapRow = row;
+                }
+            }
+            if(Math.Abs(a[swapRow, col]) == 0)
+            {
+                return 0;
+            }
+            if(swapRow != col)
+            {
+                for(int k = 0; k < n; k ++)
+                {
+                    double temp = a[col, k];
+                    a[col, k] = a[swapRow, k];
+                    a[swapRow, k] = temp;
+                }
+                det *= -1;
+            }
+            for(int row = col + 1; row < n; row ++)
+            {
+                double factor = a[row, col] / a[col, col];
+                for(int k = col; k < n; k ++)
+                {
+                    a[row, k] -= factor * a[col, k];
+                }
+            }
+            det *= a[col, col];
+        }
+        if(Math.Abs(det) <= double.Epsilon)
+        {    
+            det = 0;
         }
         return det;
     }
@@ -153,10 +165,6 @@ class Matrix //creating a class Matrix which creates a matrix and does operation
     // and its entries are just transpose of cofactors matrix of A
     public Matrix inverse()
     {
-        if(rows != cols)
-        {
-            throw new Exception("Invalid data, Matrix should be square");
-        }
         Matrix help = new Matrix(rows, rows);
         for(int i = 0; i < rows; i ++) //this loop creates a cofactor matrix
         {
@@ -201,93 +209,85 @@ class MyProg
 {
     static void Main()
     {
-        bool flag = true;
-        int n1 = 0, m1 = 0, n2 = 0, m2 = 0;
-        while
-            (flag) //in this (possibly infinite) loop I write consequences of each input command. I decided not to try hard on it, so 
-            // everything is written in this loops and not separated on functions.
+        double[,] matlabinput(out int n, out int m)
         {
-            WriteLine(
-                "Type the command which you want to execute(add - for matrix addition, mult - for matrix multiplication, inverse - for matrix inverse, det - for matrix determinant, exit - to terminate the programm): ");
+            string[] s = ReadLine().Split('[', ']');
+            string[] s1 = s[1].Split(';');
+            n = s1.Count();
+            m = s1[0].Split(',').Count();
+            double[,] res = new double[n, m];
+            for(int i = 0; i < n; i ++)
+            {
+                string[] temp = s1[i].Split(',');
+                for(int j = 0; j < m; j ++)
+                {
+                    res[i, j] = double.Parse(temp[j]);
+                }
+            }
+            return res;
+        }
+
+
+        bool flag = true;
+        while(flag) //in this (possibly infinite) loop I write consequences of each input command. I decided not to try hard on it, so 
+        // everything is written in this loops and not separated on functions.
+        {
+            WriteLine("Type the command which you want to execute(add - for matrix addition, mult - for matrix multiplication, inverse - for matrix inverse, det - for matrix determinant, exit - to terminate the programm): ");
             string? s = ReadLine();
-            if (s == "exit" || s == "Exit")
+            if(s == "exit" || s == "Exit")
             {
                 flag = false;
                 break;
             }
-
-            if (s == "add" || s == "Add")
+            if(s == "add" || s == "Add")
             {
-                Write("Please, enter the number of rows and columns of the first matrix: ");
-                string[] t = ReadLine().Split();
-                for (int i = 0; i < 2; i++)
-                {
-                    n1 = int.Parse(t[0]);
-                    m1 = int.Parse(t[1]);
-                }
-
                 WriteLine("Enter the first matrix: ");
-                Matrix a = new Matrix(n1, m1);
-                a.readMatrix();
-                Write("Please, enter the number of rows and columns of the second matrix: ");
-                string[] t1 = ReadLine().Split();
-                for (int i = 0; i < 2; i++)
+                double[,] input = matlabinput(out int n, out int m);
+                Matrix a = new Matrix(n, m);
+                a.Matrixread(input);
+                WriteLine("Enter the second matrix: ");
+                double[,] input1 = matlabinput(out int n1, out int m1);
+                Matrix b = new Matrix(n1, m1);
+                b.Matrixread(input1);
+                if(n != n1 && m != m1)
                 {
-                    n2 = int.Parse(t1[0]);
-                    m2 = int.Parse(t1[1]);
+                    WriteLine("the sum is undefined. Try again!");
                 }
-
-                WriteLine("Enter the first matrix: ");
-                Matrix b = new Matrix(n2, m2);
-                b.readMatrix();
-                Matrix c = a + b;
-                WriteLine("The sum of these matrices is: ");
-                c.print();
+                else
+                {
+                    Matrix c = a + b;
+                    WriteLine("The sum of these matrices is: ");
+                    c.print();
+                }
             }
-
-            if (s == "mult" || s == "Mult")
+            if(s == "mult" || s == "Mult")
             {
-                Write("Please, enter the number of rows and columns of the first matrix: ");
-                string[] t = ReadLine().Split();
-                for (int i = 0; i < 2; i++)
-                {
-                    n1 = int.Parse(t[0]);
-                    m1 = int.Parse(t[1]);
-                }
-
                 WriteLine("Enter the first matrix: ");
-                Matrix a = new Matrix(n1, m1);
-                a.readMatrix();
-                Write("Please, enter the number of rows and columns of the second matrix: ");
-                string[] t1 = ReadLine().Split();
-                for (int i = 0; i < 2; i++)
+                double[,] input = matlabinput(out int n, out int m);
+                Matrix a = new Matrix(n, m);
+                a.Matrixread(input);
+                WriteLine("Enter the second matrix: ");
+                double[,] input1 = matlabinput(out int n1, out int m1);
+                Matrix b = new Matrix(n1, m1);
+                b.Matrixread(input1);
+                if(m != n1)
                 {
-                    n2 = int.Parse(t1[0]);
-                    m2 = int.Parse(t1[1]);
+                    WriteLine("multiplication is udefined. Try again!");
                 }
-
-                WriteLine("Enter the first matrix: ");
-                Matrix b = new Matrix(n2, m2);
-                b.readMatrix();
-                Matrix c = a * b;
-                WriteLine("The sum of these matrices is: ");
-                c.print();
+                else
+                {
+                    Matrix c = a * b;
+                    WriteLine("The mult of these matrices is: ");
+                    c.print();
+                }
             }
-
-            if (s == "inverse" || s == "Inverse")
+            if(s == "inverse" || s == "Inverse")
             {
-                Write("Please, enter the number of rows and columns of the matrix: ");
-                string[] t = ReadLine().Split();
-                for (int i = 0; i < 2; i++)
-                {
-                    n1 = int.Parse(t[0]);
-                    m1 = int.Parse(t[1]);
-                }
-
-                Matrix a = new Matrix(n1, m1);
                 WriteLine("Enter the matrix: ");
-                a.readMatrix();
-                if (a.det() == 0)
+                double[,] input = matlabinput(out int n, out int m);
+                Matrix a = new Matrix(n, m);
+                a.Matrixread(input);
+                if(a.det() == 0)
                 {
                     WriteLine("Matrix doesnt have an inverse");
                 }
@@ -298,22 +298,22 @@ class MyProg
                     c.print();
                 }
             }
-
-            if (s == "det" || s == "Det")
+            if(s == "det" || s == "Det")
             {
-                Write("Please, enter the number of rows and columns of the matrix: ");
-                string[] t = ReadLine().Split();
-                for (int i = 0; i < 2; i++)
-                {
-                    n1 = int.Parse(t[0]);
-                    m1 = int.Parse(t[1]);
-                }
-
-                Matrix a = new Matrix(n1, m1);
+                
                 WriteLine("Enter the matrix: ");
-                a.readMatrix();
-                WriteLine("The matrix determinant is: ");
-                WriteLine(a.det());
+                double[,] input = matlabinput(out int n, out int m);
+                Matrix a = new Matrix(n, m);
+                a.Matrixread(input);
+                if(n != m)
+                {
+                    WriteLine("determinant cant be calculated");
+                }
+                else
+                {
+                    WriteLine("The matrix determinant is: ");
+                    WriteLine(a.det());
+                }
             }
         }
     }
