@@ -1,0 +1,14 @@
+/Users/mariia/RiderProjects/Solution/Matrix-proj/bin/Debug/net7.0/Matrix-proj
+/Users/mariia/RiderProjects/Solution/Matrix-proj/bin/Debug/net7.0/Matrix-proj.deps.json
+/Users/mariia/RiderProjects/Solution/Matrix-proj/bin/Debug/net7.0/Matrix-proj.runtimeconfig.json
+/Users/mariia/RiderProjects/Solution/Matrix-proj/bin/Debug/net7.0/Matrix-proj.dll
+/Users/mariia/RiderProjects/Solution/Matrix-proj/bin/Debug/net7.0/Matrix-proj.pdb
+/Users/mariia/RiderProjects/Solution/Matrix-proj/obj/Debug/net7.0/Matrix-proj.GeneratedMSBuildEditorConfig.editorconfig
+/Users/mariia/RiderProjects/Solution/Matrix-proj/obj/Debug/net7.0/Matrix-proj.AssemblyInfoInputs.cache
+/Users/mariia/RiderProjects/Solution/Matrix-proj/obj/Debug/net7.0/Matrix-proj.AssemblyInfo.cs
+/Users/mariia/RiderProjects/Solution/Matrix-proj/obj/Debug/net7.0/Matrix-proj.csproj.CoreCompileInputs.cache
+/Users/mariia/RiderProjects/Solution/Matrix-proj/obj/Debug/net7.0/Matrix-proj.dll
+/Users/mariia/RiderProjects/Solution/Matrix-proj/obj/Debug/net7.0/refint/Matrix-proj.dll
+/Users/mariia/RiderProjects/Solution/Matrix-proj/obj/Debug/net7.0/Matrix-proj.pdb
+/Users/mariia/RiderProjects/Solution/Matrix-proj/obj/Debug/net7.0/Matrix-proj.genruntimeconfig.cache
+/Users/mariia/RiderProjects/Solution/Matrix-proj/obj/Debug/net7.0/ref/Matrix-proj.dll
